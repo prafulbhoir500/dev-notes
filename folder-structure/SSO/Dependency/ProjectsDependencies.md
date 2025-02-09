@@ -36,20 +36,21 @@ Clean Architecture consists of several layers that are independent of each other
 
 ## Architecture Diagram
 
-+-------------------+      +------------------+      +--------------------+
-|   Web Project     | <--> |   Application    | <--> |   Infrastructure   |
-|    (UI Layer)     |      |      Layer       |      |       Layer        |
-|                   |      |                  |      |                    |
-|  - Controllers    |      |   - Use Cases    |      |   - Repositories   |
-|  - Views / API    |      |   - Commands     |      |   - Services       |
-|                   |      |   - DTOs         |      |                    |
-+-------------------+      +------------------+      +--------------------+
-                                   |
-                                   v
-                         +------------------+
-                         |    Domain Layer  |
-                         |                  |
-                         |  - Entities      |
-                         |  - Value Objects |
-                         |  - Domain Logic  |
-                         +------------------+
+# SSO Solution Architecture
+
+| **Web Project (UI Layer)**  | **Application Layer**         | **Infrastructure Layer**  |
+| --------------------------- | ----------------------------- | ------------------------- |
+| 🔄 **Controllers**           | 📋 **Use Cases**              | 🗄️ **Repositories**       |
+| 🌐 **Views / API**           | ⏩ **Commands**               | 🛠️ **Services**           |
+|                             | 📦 **DTOs**                   |                           |
+|                             |                               |                           |
+| **Domain Layer**             |                               |                           |
+| 🏢 **Entities**              |                               |                           |
+| 🎯 **Value Objects**         |                               |                           |
+| 🧠 **Domain Logic**          |                               |                           |
+
+
+**Arrows:**
+- `Web Project (UI Layer)` → `Application Layer`
+- `Application Layer` → `Infrastructure Layer`
+- `Application Layer` → `Domain Layer`
