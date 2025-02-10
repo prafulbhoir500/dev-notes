@@ -13,14 +13,18 @@ Feel free to visit my GitHub profile for more updates and projects:
 Check out the following reference link for more information:
 [![Reference Link](https://img.shields.io/badge/Reference%20Link-Click%20Here-blue)](https://prafulbhoir.somee.com/)
 
+Static Badge :
+[![Reference Link](https://img.shields.io/badge/Reference%20Link-Click%20Here-blue)](https://shields.io/)
+
 
 ## 4. **YouTube Channel**
 Below are the YouTube channels with clickable badges for easy access:
 
-| Channel Name           | Link                                                       |
-|------------------------|------------------------------------------------------------|
-| **WebGentle**           | [![YouTube](https://img.shields.io/badge/YouTube-Visit%20Channel-red?logo=youtube)](https://www.youtube.com/@WebGentle) |
-| **DotNet Real World Example** | [![YouTube](https://img.shields.io/badge/YouTube-Visit%20Channel-red?logo=youtube)](https://www.youtube.com/@dotnetrealworldexample) |
-| **Study Mash**         | [![YouTube](https://img.shields.io/badge/YouTube-Visit%20Channel-red?logo=youtube)](https://www.youtube.com/@StudyMash) |
+| Channel Name                | Description                              | Link                                                       |
+|-----------------------------|------------------------------------------|------------------------------------------------------------|
+| **WebGentle**                | Tutorials on web development and design. | [![YouTube](https://img.shields.io/badge/YouTube-Visit%20Channel-red?logo=youtube)](https://www.youtube.com/@WebGentle) |
+| **DotNet Real World Example**| Real-world .NET development examples.    | [![YouTube](https://img.shields.io/badge/YouTube-Visit%20Channel-red?logo=youtube)](https://www.youtube.com/@dotnetrealworldexample) |
+| **Study Mash**              | Study tips, programming tutorials.       | [![YouTube](https://img.shields.io/badge/YouTube-Visit%20Channel-red?logo=youtube)](https://www.youtube.com/@StudyMash) |
+
 
 
