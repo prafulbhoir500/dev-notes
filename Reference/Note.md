@@ -15,12 +15,12 @@ Check out the following reference link for more information:
 
 
 ## 4. **YouTube Channel**
-WebGentle: 
-[![YouTube](https://img.shields.io/badge/YouTube-Visit%20Channel-red?logo=youtube)](https://www.youtube.com/@WebGentle)
+Below are the YouTube channels with clickable badges for easy access:
 
-DotNet Real world example: 
-[![YouTube](https://img.shields.io/badge/YouTube-Visit%20Channel-red?logo=youtube)](https://www.youtube.com/@dotnetrealworldexample)
+| Channel Name           | Link                                                       |
+|------------------------|------------------------------------------------------------|
+| **WebGentle**           | [![YouTube](https://img.shields.io/badge/YouTube-Visit%20Channel-red?logo=youtube)](https://www.youtube.com/@WebGentle) |
+| **DotNet Real World Example** | [![YouTube](https://img.shields.io/badge/YouTube-Visit%20Channel-red?logo=youtube)](https://www.youtube.com/@dotnetrealworldexample) |
+| **Study Mash**         | [![YouTube](https://img.shields.io/badge/YouTube-Visit%20Channel-red?logo=youtube)](https://www.youtube.com/@StudyMash) |
 
-Study Mash :
-[![YouTube](https://img.shields.io/badge/YouTube-Visit%20Channel-red?logo=youtube)](https://www.youtube.com/@StudyMash)
 
