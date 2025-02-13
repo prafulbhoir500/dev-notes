@@ -13,3 +13,5 @@ Scaffold-DbContext "Your_Connection_String" Microsoft.EntityFrameworkCore.SqlSer
     -NoOnConfiguring `
     -NoPluralize `
     -Force
+
+https://1drv.ms/o/c/e023ed817c66522b/EitSZnyB7SMggOBmRgAAAAAByAEKxc5wQzA83gem7b9vJw?e=cfEoPV
