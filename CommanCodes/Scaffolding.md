@@ -1,6 +1,6 @@
 # Steps to Scaffold Entity Classes in Specific Folders
 
- Scaffold-DbContext -Connection "Your_Connection_String" Microsoft.EntityFrameworkCore.SqlServer -OutputDir "../SSO.Domain/Entities"-ContextDir "Persistence" -Context "ApplicationDbContext" -Project SSO.Infrastructure -StartupProject SSO.Web -NoPluralize -Force
+Scaffold-DbContext -Connection name=DefaultConnection Microsoft.EntityFrameworkCore.SqlServer -OutputDir "../SSO.Domain/Entities" -Namespace SSO.Domain -ContextDir "Persistence" -Context "ApplicationDbContext" -ContextNamespace SSO.Infrastructure -Force
 
 
 # Regenerate Without Overwriting Custom Modifications
