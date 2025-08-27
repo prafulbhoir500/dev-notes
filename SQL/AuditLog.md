@@ -1,4 +1,4 @@
-#Audit Table
+# Audit Table
 
 ```sql
 CREATE TABLE users_audit (
@@ -12,7 +12,7 @@ CREATE TABLE users_audit (
 );
 ```
 
-#Add Trigger
+# Add Trigger
 
 ```sql
 CREATE TRIGGER trg_audit_users
