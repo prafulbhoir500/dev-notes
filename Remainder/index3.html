@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Reminder Pro - Smart Task Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dark .glass-effect {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .reminder-card {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .reminder-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .priority-high {
+            border-left: 4px solid #ef4444;
+        }
+
+        .priority-medium {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .priority-low {
+            border-left: 4px solid #10b981;
+        }
+
+        .notification-badge {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .category-icon {
+            transition: all 0.3s ease;
+        }
+
+        .category-icon:hover {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .tag {
+            transition: all 0.2s ease;
+        }
+
+        .tag:hover {
+            transform: scale(1.05);
+        }
+
+        .calendar-day {
+            transition: all 0.2s ease;
+        }
+
+        .calendar-day:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+            transform: scale(1.05);
+        }
+
+        .voice-wave {
+            animation: wave 1.5s infinite;
+        }
+
+        @keyframes wave {
+
+            0%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            50% {
+                transform: scaleY(1.5);
+            }
+        }
+
+        .subtask-item {
+            transition: all 0.2s ease;
+        }
+
+        .subtask-item:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .subtask-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .dark ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+        }
+
+        .recurring-indicator {
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Side Menu Styles */
+        .side-menu {
+            transition: transform 0.3s ease-in-out;
+            z-index: 40;
+        }
+
+        .side-menu.open {
+            transform: translateX(0);
+        }
+
+        .side-menu.closed {
+            transform: translateX(-100%);
+        }
+
+        .overlay {
+            transition: opacity 0.3s ease-in-out;
+            z-index: 30;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .overlay.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .master-item {
+            transition: all 0.2s ease;
+        }
+
+        .master-item:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+            transform: translateX(5px);
+        }
+
+        .dark .master-item:hover {
+            background-color: rgba(99, 102, 241, 0.2);
+        }
+
+        .collapsible-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible-section.open {
+            max-height: 500px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        @media (min-width: 768px) {
+            .side-menu {
+                transform: translateX(0);
+            }
+
+            .overlay {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Side Menu -->
+    <div id="sideMenu"
+        class="side-menu closed fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 shadow-lg md:shadow-none md:border-r md:border-gray-200 dark:md:border-gray-700">
+        <div class="p-4 h-full flex flex-col">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Master Data</h2>
+                <button id="closeSideMenu"
+                    class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-times text-gray-600 dark:text-gray-300"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto">
+                <!-- Categories Section -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-2 cursor-pointer"
+                        onclick="toggleSection('categoriesSection')">
+                        <h3 class="text-md font-medium text-gray-700 dark:text-gray-300">Categories</h3>
+                        <i id="categoriesSectionIcon"
+                            class="fas fa-chevron-down text-gray-500 text-sm transition-transform"></i>
+                    </div>
+                    <div id="categoriesSection" class="collapsible-section open">
+                        <ul id="categoriesList" class="space-y-1 mb-2">
+                            <!-- Categories will be listed here -->
+                        </ul>
+                        <button onclick="addCategory()"
+                            class="w-full text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 py-1 px-2 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors">
+                            <i class="fas fa-plus mr-1"></i>Add Category
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Priorities Section -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-2 cursor-pointer"
+                        onclick="toggleSection('prioritiesSection')">
+                        <h3 class="text-md font-medium text-gray-700 dark:text-gray-300">Priorities</h3>
+                        <i id="prioritiesSectionIcon"
+                            class="fas fa-chevron-down text-gray-500 text-sm transition-transform"></i>
+                    </div>
+                    <div id="prioritiesSection" class="collapsible-section open">
+                        <ul id="prioritiesList" class="space-y-1 mb-2">
+                            <!-- Priorities will be listed here -->
+                        </ul>
+                        <button onclick="addPriority()"
+                            class="w-full text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 py-1 px-2 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors">
+                            <i class="fas fa-plus mr-1"></i>Add Priority
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tags Section -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-2 cursor-pointer"
+                        onclick="toggleSection('tagsSection')">
+                        <h3 class="text-md font-medium text-gray-700 dark:text-gray-300">Tags</h3>
+                        <i id="tagsSectionIcon"
+                            class="fas fa-chevron-down text-gray-500 text-sm transition-transform"></i>
+                    </div>
+                    <div id="tagsSection" class="collapsible-section open">
+                        <ul id="tagsList" class="space-y-1 mb-2">
+                            <!-- Tags will be listed here -->
+                        </ul>
+                        <button onclick="addTag()"
+                            class="w-full text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 py-1 px-2 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors">
+                            <i class="fas fa-plus mr-1"></i>Add Tag
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button onclick="exportMasterData()"
+                    class="w-full text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-3 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-download mr-2"></i>Export Master Data
+                </button>
+                <button onclick="importMasterData()"
+                    class="w-full text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 py-2 px-3 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-upload mr-2"></i>Import Master Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay for mobile -->
+    <div id="overlay" class="overlay hide fixed inset-0 bg-black bg-opacity-50 md:hidden"></div>
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50 transition-colors duration-300">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button id="sideMenuToggle"
+                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <i class="fas fa-bars text-gray-600 dark:text-gray-300"></i>
+                    </button>
+                    <i class="fas fa-bell text-3xl text-indigo-600 dark:text-indigo-400"></i>
+                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Advanced Reminder Pro</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="voiceInputBtn"
+                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative">
+                        <i class="fas fa-microphone text-gray-600 dark:text-gray-300"></i>
+                        <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full hidden"
+                            id="voiceIndicator"></span>
+                    </button>
+                    <button id="calendarViewBtn"
+                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <i class="fas fa-calendar-alt text-gray-600 dark:text-gray-300"></i>
+                    </button>
+                    <button id="exportBtn"
+                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <i class="fas fa-download text-gray-600 dark:text-gray-300"></i>
+                    </button>
+                    <button id="importBtn"
+                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <i class="fas fa-upload text-gray-600 dark:text-gray-300"></i>
+                    </button>
+                    <button id="searchToggle"
+                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <i class="fas fa-search text-gray-600 dark:text-gray-300"></i>
+                    </button>
+                    <button id="darkModeToggle"
+                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <i class="fas fa-moon text-gray-600 dark:text-gray-300"></i>
+                    </button>
+                    <button id="addReminderBtn"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                        <i class="fas fa-plus"></i>
+                        <span>Add Reminder</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Advanced Search Bar -->
+    <div id="searchBar" class="hidden bg-white dark:bg-gray-800 shadow-md transition-all duration-300">
+        <div class="container mx-auto px-4 py-3">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="Search reminders..."
+                        class="w-full px-4 py-2 pl-10 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+                <select id="categoryFilter"
+                    class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="">All Categories</option>
+                </select>
+                <select id="priorityFilter"
+                    class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="">All Priorities</option>
+                </select>
+                <input type="text" id="tagFilter" placeholder="Filter by tags..."
+                    class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 md:ml-0" id="mainContent">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 fade-in">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Total</p>
+                        <p class="text-2xl font-bold text-gray-800 dark:text-white" id="totalReminders">0</p>
+                    </div>
+                    <i class="fas fa-tasks text-3xl text-indigo-500"></i>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 fade-in">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Today</p>
+                        <p class="text-2xl font-bold text-gray-800 dark:text-white" id="todayReminders">0</p>
+                    </div>
+                    <i class="fas fa-calendar-day text-3xl text-green-500"></i>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 fade-in">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Pending</p>
+                        <p class="text-2xl font-bold text-gray-800 dark:text-white" id="pendingReminders">0</p>
+                    </div>
+                    <i class="fas fa-clock text-3xl text-yellow-500"></i>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 fade-in">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Completed</p>
+                        <p class="text-2xl font-bold text-gray-800 dark:text-white" id="completedReminders">0</p>
+                    </div>
+                    <i class="fas fa-check-circle text-3xl text-blue-500"></i>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 fade-in">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Recurring</p>
+                        <p class="text-2xl font-bold text-gray-800 dark:text-white" id="recurringReminders">0</p>
+                    </div>
+                    <i class="fas fa-sync-alt text-3xl text-purple-500 recurring-indicator"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex flex-wrap gap-2">
+                    <button class="view-tab active px-4 py-2 rounded-lg bg-indigo-600 text-white transition-colors"
+                        data-view="list">
+                        <i class="fas fa-list mr-2"></i>List View
+                    </button>
+                    <button
+                        class="view-tab px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        data-view="calendar">
+                        <i class="fas fa-calendar mr-2"></i>Calendar View
+                    </button>
+                    <button
+                        class="view-tab px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        data-view="kanban">
+                        <i class="fas fa-columns mr-2"></i>Kanban View
+                    </button>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Sort by:</span>
+                    <select id="sortBy"
+                        class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="date">Date</option>
+                        <option value="priority">Priority</option>
+                        <option value="title">Title</option>
+                        <option value="created">Created</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- List View -->
+        <div id="listView" class="view-content">
+            <!-- Filter Tabs -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 mb-6">
+                <div class="flex flex-wrap gap-2">
+                    <button class="filter-tab active px-4 py-2 rounded-lg bg-indigo-600 text-white transition-colors"
+                        data-filter="all">
+                        All
+                    </button>
+                    <button
+                        class="filter-tab px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        data-filter="today">
+                        Today
+                    </button>
+                    <button
+                        class="filter-tab px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        data-filter="upcoming">
+                        Upcoming
+                    </button>
+                    <button
+                        class="filter-tab px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        data-filter="completed">
+                        Completed
+                    </button>
+                    <button
+                        class="filter-tab px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        data-filter="pending">
+                        Pending
+                    </button>
+                    <button
+                        class="filter-tab px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        data-filter="recurring">
+                        Recurring
+                    </button>
+                </div>
+            </div>
+
+            <!-- Reminders Grid -->
+            <div id="remindersContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Reminder cards will be dynamically inserted here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="text-center py-16 hidden">
+                <i class="fas fa-bell-slash text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">No reminders found</h3>
+                <p class="text-gray-500 dark:text-gray-500 mb-6">Create your first reminder to get started!</p>
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg transition-colors"
+                    onclick="openAddReminderModal()">
+                    <i class="fas fa-plus mr-2"></i>Add Reminder
+                </button>
+            </div>
+        </div>
+
+        <!-- Calendar View -->
+        <div id="calendarView" class="view-content hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
+                        <span id="currentMonth"></span> <span id="currentYear"></span>
+                    </h2>
+                    <div class="flex items-center space-x-2">
+                        <button id="prevMonth"
+                            class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button id="todayBtn"
+                            class="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+                            Today
+                        </button>
+                        <button id="nextMonth"
+                            class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-7 gap-1">
+                    <div class="text-center font-semibold text-gray-600 dark:text-gray-400 py-2">Sun</div>
+                    <div class="text-center font-semibold text-gray-600 dark:text-gray-400 py-2">Mon</div>
+                    <div class="text-center font-semibold text-gray-600 dark:text-gray-400 py-2">Tue</div>
+                    <div class="text-center font-semibold text-gray-600 dark:text-gray-400 py-2">Wed</div>
+                    <div class="text-center font-semibold text-gray-600 dark:text-gray-400 py-2">Thu</div>
+                    <div class="text-center font-semibold text-gray-600 dark:text-gray-400 py-2">Fri</div>
+                    <div class="text-center font-semibold text-gray-600 dark:text-gray-400 py-2">Sat</div>
+                </div>
+                <div id="calendarGrid" class="grid grid-cols-7 gap-1">
+                    <!-- Calendar days will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Kanban View -->
+        <div id="kanbanView" class="view-content hidden">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4">
+                    <h3 class="font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+                        <i class="fas fa-clock text-yellow-500 mr-2"></i>To Do
+                    </h3>
+                    <div id="todoColumn" class="space-y-3 min-h-[400px]">
+                        <!-- Kanban cards will be dynamically inserted here -->
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4">
+                    <h3 class="font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+                        <i class="fas fa-spinner text-blue-500 mr-2"></i>In Progress
+                    </h3>
+                    <div id="inProgressColumn" class="space-y-3 min-h-[400px]">
+                        <!-- Kanban cards will be dynamically inserted here -->
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4">
+                    <h3 class="font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>Completed
+                    </h3>
+                    <div id="completedColumn" class="space-y-3 min-h-[400px]">
+                        <!-- Kanban cards will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Reminder Modal -->
+    <div id="reminderModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white" id="modalTitle">Add New Reminder</h2>
+                    <button onclick="closeReminderModal()"
+                        class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="reminderForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title</label>
+                        <input type="text" id="reminderTitle" required
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+                        <textarea id="reminderDescription" rows="3"
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                            <select id="reminderCategory"
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </select>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Priority</label>
+                            <select id="reminderPriority"
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date &
+                                Time</label>
+                            <input type="datetime-local" id="reminderDateTime" required
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Recurring</label>
+                            <select id="reminderRecurring"
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="none">None</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tags (comma
+                            separated)</label>
+                        <input type="text" id="reminderTags" placeholder="e.g., urgent, meeting, project"
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subtasks</label>
+                        <div id="subtasksContainer" class="space-y-2 mb-2">
+                            <!-- Subtasks will be dynamically added here -->
+                        </div>
+                        <button type="button" onclick="addSubtask()"
+                            class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">
+                            <i class="fas fa-plus mr-1"></i>Add Subtask
+                        </button>
+                    </div>
+
+                    <div class="flex space-x-3 pt-4">
+                        <button type="submit"
+                            class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition-colors">
+                            <i class="fas fa-save mr-2"></i>Save Reminder
+                        </button>
+                        <button type="button" onclick="closeReminderModal()"
+                            class="flex-1 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 py-2 rounded-lg transition-colors">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Master Data Modal -->
+    <div id="masterDataModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md mx-4">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white" id="masterDataModalTitle">Add Category
+                    </h2>
+                    <button onclick="closeMasterDataModal()"
+                        class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="masterDataForm" class="space-y-4">
+                    <input type="hidden" id="masterDataType">
+                    <input type="hidden" id="masterDataId">
+
+                    <div id="categoryFields" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>
+                            <input type="text" id="categoryName" required
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Icon</label>
+                            <select id="categoryIcon"
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="fa-user">User</option>
+                                <option value="fa-briefcase">Briefcase</option>
+                                <option value="fa-heartbeat">Heartbeat</option>
+                                <option value="fa-shopping-cart">Shopping Cart</option>
+                                <option value="fa-tag">Tag</option>
+                                <option value="fa-home">Home</option>
+                                <option value="fa-car">Car</option>
+                                <option value="fa-book">Book</option>
+                                <option value="fa-music">Music</option>
+                                <option value="fa-gamepad">Gamepad</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Color</label>
+                            <select id="categoryColor"
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="text-blue-500">Blue</option>
+                                <option value="text-purple-500">Purple</option>
+                                <option value="text-red-500">Red</option>
+                                <option value="text-green-500">Green</option>
+                                <option value="text-yellow-500">Yellow</option>
+                                <option value="text-indigo-500">Indigo</option>
+                                <option value="text-pink-500">Pink</option>
+                                <option value="text-gray-500">Gray</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="priorityFields" class="space-y-4 hidden">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>
+                            <input type="text" id="priorityName" required
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Level</label>
+                            <select id="priorityLevel"
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="1">1 (Lowest)</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5 (Highest)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="tagFields" class="space-y-4 hidden">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>
+                            <input type="text" id="tagName" required
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Color</label>
+                            <select id="tagColor"
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">Blue
+                                </option>
+                                <option value="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+                                    Purple</option>
+                                <option value="bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">Red</option>
+                                <option value="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">Green
+                                </option>
+                                <option value="bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300">
+                                    Yellow</option>
+                                <option value="bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300">
+                                    Indigo</option>
+                                <option value="bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-300">Pink
+                                </option>
+                                <option value="bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300">Gray
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-3 pt-4">
+                        <button type="submit"
+                            class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition-colors">
+                            <i class="fas fa-save mr-2"></i>Save
+                        </button>
+                        <button type="button" onclick="closeMasterDataModal()"
+                            class="flex-1 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 py-2 rounded-lg transition-colors">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice Input Modal -->
+    <div id="voiceModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8 text-center">
+            <div class="mb-6">
+                <i class="fas fa-microphone text-6xl text-red-500 mb-4"></i>
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Listening...</h3>
+                <p class="text-gray-600 dark:text-gray-400">Speak your reminder now</p>
+            </div>
+            <div class="flex justify-center space-x-2 mb-6">
+                <div class="w-2 h-8 bg-red-500 rounded-full voice-wave"></div>
+                <div class="w-2 h-12 bg-red-500 rounded-full voice-wave" style="animation-delay: 0.1s"></div>
+                <div class="w-2 h-10 bg-red-500 rounded-full voice-wave" style="animation-delay: 0.2s"></div>
+                <div class="w-2 h-14 bg-red-500 rounded-full voice-wave" style="animation-delay: 0.3s"></div>
+                <div class="w-2 h-8 bg-red-500 rounded-full voice-wave" style="animation-delay: 0.4s"></div>
+            </div>
+            <button onclick="stopVoiceInput()"
+                class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition-colors">
+                <i class="fas fa-stop mr-2"></i>Stop
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notificationToast"
+        class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full transition-transform duration-300 z-50">
+        <div class="flex items-center space-x-3">
+            <i class="fas fa-check-circle"></i>
+            <span id="notificationMessage">Reminder saved successfully!</span>
+        </div>
+    </div>
+
+    <!-- Hidden file inputs for import -->
+    <input type="file" id="importFile" accept=".json" class="hidden">
+    <input type="file" id="importMasterFile" accept=".json" class="hidden">
+
+    <script>
+        // Global variables
+        let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+        let masterData = JSON.parse(localStorage.getItem('masterData')) || {
+            categories: [
+                { id: 1, name: 'Personal', icon: 'fa-user', color: 'text-blue-500' },
+                { id: 2, name: 'Work', icon: 'fa-briefcase', color: 'text-purple-500' },
+                { id: 3, name: 'Health', icon: 'fa-heartbeat', color: 'text-red-500' },
+                { id: 4, name: 'Shopping', icon: 'fa-shopping-cart', color: 'text-green-500' },
+                { id: 5, name: 'Other', icon: 'fa-tag', color: 'text-gray-500' }
+            ],
+            priorities: [
+                { id: 1, name: 'Low', level: 1 },
+                { id: 2, name: 'Medium', level: 3 },
+                { id: 3, name: 'High', level: 5 }
+            ],
+            tags: []
+        };
+        let currentFilter = 'all';
+        let currentView = 'list';
+        let editingReminderId = null;
+        let currentMonth = new Date();
+        let recognition = null;
+        let subtaskCounter = 0;
+        let sideMenuOpen = false;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+            checkReminders();
+            setInterval(checkReminders, 60000); // Check every minute
+            initializeCalendar();
+            renderMasterData();
+            populateFormOptions();
+        });
+
+        function initializeApp() {
+            renderReminders();
+            updateStats();
+            setupEventListeners();
+            initializeVoiceRecognition();
+
+            // Check for dark mode preference
+            if (localStorage.getItem('darkMode') === 'true' ||
+                (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                updateDarkModeIcon();
+            }
+
+            // Check for side menu preference
+            if (localStorage.getItem('sideMenuOpen') === 'true' && window.innerWidth >= 768) {
+                toggleSideMenu();
+            }
+        }
+
+        function setupEventListeners() {
+            // Side menu toggle
+            document.getElementById('sideMenuToggle').addEventListener('click', toggleSideMenu);
+            document.getElementById('closeSideMenu').addEventListener('click', toggleSideMenu);
+            document.getElementById('overlay').addEventListener('click', toggleSideMenu);
+
+            // Dark mode toggle
+            document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
+
+            // Search toggle
+            document.getElementById('searchToggle').addEventListener('click', toggleSearch);
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+            document.getElementById('categoryFilter').addEventListener('change', handleAdvancedSearch);
+            document.getElementById('priorityFilter').addEventListener('change', handleAdvancedSearch);
+            document.getElementById('tagFilter').addEventListener('input', handleAdvancedSearch);
+
+            // Add reminder button
+            document.getElementById('addReminderBtn').addEventListener('click', openAddReminderModal);
+
+            // Form submission
+            document.getElementById('reminderForm').addEventListener('submit', handleFormSubmit);
+            document.getElementById('masterDataForm').addEventListener('submit', handleMasterDataFormSubmit);
+
+            // Filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', handleFilterChange);
+            });
+
+            // View tabs
+            document.querySelectorAll('.view-tab').forEach(tab => {
+                tab.addEventListener('click', handleViewChange);
+            });
+
+            // Sort by
+            document.getElementById('sortBy').addEventListener('change', handleSortChange);
+
+            // Calendar navigation
+            document.getElementById('prevMonth').addEventListener('click', () => changeMonth(-1));
+            document.getElementById('nextMonth').addEventListener('click', () => changeMonth(1));
+            document.getElementById('todayBtn').addEventListener('click', goToToday);
+
+            // Voice input
+            document.getElementById('voiceInputBtn').addEventListener('click', startVoiceInput);
+
+            // Export/Import
+            document.getElementById('exportBtn').addEventListener('click', exportReminders);
+            document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+            document.getElementById('importFile').addEventListener('change', importReminders);
+
+            // Modal close on outside click
+            document.getElementById('reminderModal').addEventListener('click', (e) => {
+                if (e.target.id === 'reminderModal') {
+                    closeReminderModal();
+                }
+            });
+
+            document.getElementById('masterDataModal').addEventListener('click', (e) => {
+                if (e.target.id === 'masterDataModal') {
+                    closeMasterDataModal();
+                }
+            });
+
+            document.getElementById('voiceModal').addEventListener('click', (e) => {
+                if (e.target.id === 'voiceModal') {
+                    stopVoiceInput();
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', handleWindowResize);
+        }
+
+        function handleWindowResize() {
+            if (window.innerWidth >= 768 && sideMenuOpen) {
+                document.getElementById('overlay').classList.add('hide');
+            }
+        }
+
+        // Side Menu Functions
+        function toggleSideMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('overlay');
+            const mainContent = document.getElementById('mainContent');
+
+            sideMenuOpen = !sideMenuOpen;
+
+            if (sideMenuOpen) {
+                sideMenu.classList.remove('closed');
+                sideMenu.classList.add('open');
+
+                if (window.innerWidth < 768) {
+                    overlay.classList.remove('hide');
+                    overlay.classList.add('show');
+                }
+
+                mainContent.classList.add('md:ml-64');
+            } else {
+                sideMenu.classList.remove('open');
+                sideMenu.classList.add('closed');
+                overlay.classList.remove('show');
+                overlay.classList.add('hide');
+                mainContent.classList.remove('md:ml-64');
+            }
+
+            localStorage.setItem('sideMenuOpen', sideMenuOpen);
+        }
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const icon = document.getElementById(sectionId + 'Icon');
+
+            section.classList.toggle('open');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        }
+
+        function renderMasterData() {
+            renderCategories();
+            renderPriorities();
+            renderTags();
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categoriesList');
+            container.innerHTML = '';
+
+            masterData.categories.forEach(category => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center justify-between p-2 rounded-lg master-item';
+                li.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <i class="fas ${category.icon} ${category.color}"></i>
+                        <span class="text-gray-700 dark:text-gray-300">${category.name}</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <button onclick="editCategory(${category.id})" class="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <i class="fas fa-edit text-gray-500 text-xs"></i>
+                        </button>
+                        <button onclick="deleteCategory(${category.id})" class="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <i class="fas fa-trash text-red-500 text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(li);
+            });
+        }
+
+        function renderPriorities() {
+            const container = document.getElementById('prioritiesList');
+            container.innerHTML = '';
+
+            masterData.priorities.forEach(priority => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center justify-between p-2 rounded-lg master-item';
+                li.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-700 dark:text-gray-300">${priority.name}</span>
+                        <span class="text-xs bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full">Level ${priority.level}</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <button onclick="editPriority(${priority.id})" class="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <i class="fas fa-edit text-gray-500 text-xs"></i>
+                        </button>
+                        <button onclick="deletePriority(${priority.id})" class="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <i class="fas fa-trash text-red-500 text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(li);
+            });
+        }
+
+        function renderTags() {
+            const container = document.getElementById('tagsList');
+            container.innerHTML = '';
+
+            masterData.tags.forEach(tag => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center justify-between p-2 rounded-lg master-item';
+                li.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="${tag.color} text-xs px-2 py-1 rounded-full">#${tag.name}</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <button onclick="editTag(${tag.id})" class="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <i class="fas fa-edit text-gray-500 text-xs"></i>
+                        </button>
+                        <button onclick="deleteTag(${tag.id})" class="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <i class="fas fa-trash text-red-500 text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(li);
+            });
+        }
+
+        function populateFormOptions() {
+            // Populate category options
+            const categorySelect = document.getElementById('reminderCategory');
+            const categoryFilter = document.getElementById('categoryFilter');
+
+            categorySelect.innerHTML = '';
+            categoryFilter.innerHTML = '<option value="">All Categories</option>';
+
+            masterData.categories.forEach(category => {
+                categorySelect.innerHTML += `<option value="${category.name}">${category.name}</option>`;
+                categoryFilter.innerHTML += `<option value="${category.name}">${category.name}</option>`;
+            });
+
+            // Populate priority options
+            const prioritySelect = document.getElementById('reminderPriority');
+            const priorityFilter = document.getElementById('priorityFilter');
+
+            prioritySelect.innerHTML = '';
+            priorityFilter.innerHTML = '<option value="">All Priorities</option>';
+
+            masterData.priorities.forEach(priority => {
+                prioritySelect.innerHTML += `<option value="${priority.name}">${priority.name}</option>`;
+                priorityFilter.innerHTML += `<option value="${priority.name}">${priority.name}</option>`;
+            });
+        }
+
+        function addCategory() {
+            document.getElementById('masterDataModalTitle').textContent = 'Add Category';
+            document.getElementById('masterDataType').value = 'category';
+            document.getElementById('masterDataId').value = '';
+            document.getElementById('categoryName').value = '';
+            document.getElementById('categoryIcon').value = 'fa-user';
+            document.getElementById('categoryColor').value = 'text-blue-500';
+
+            showMasterDataFields('categoryFields');
+            document.getElementById('masterDataModal').classList.remove('hidden');
+        }
+
+        function editCategory(id) {
+            const category = masterData.categories.find(c => c.id === id);
+
+            document.getElementById('masterDataModalTitle').textContent = 'Edit Category';
+            document.getElementById('masterDataType').value = 'category';
+            document.getElementById('masterDataId').value = id;
+            document.getElementById('categoryName').value = category.name;
+            document.getElementById('categoryIcon').value = category.icon;
+            document.getElementById('categoryColor').value = category.color;
+
+            showMasterDataFields('categoryFields');
+            document.getElementById('masterDataModal').classList.remove('hidden');
+        }
+
+        function deleteCategory(id) {
+            if (confirm('Are you sure you want to delete this category?')) {
+                masterData.categories = masterData.categories.filter(c => c.id !== id);
+                saveMasterData();
+                renderMasterData();
+                populateFormOptions();
+                renderReminders();
+                showNotification('Category deleted successfully!');
+            }
+        }
+
+        function addPriority() {
+            document.getElementById('masterDataModalTitle').textContent = 'Add Priority';
+            document.getElementById('masterDataType').value = 'priority';
+            document.getElementById('masterDataId').value = '';
+            document.getElementById('priorityName').value = '';
+            document.getElementById('priorityLevel').value = '3';
+
+            showMasterDataFields('priorityFields');
+            document.getElementById('masterDataModal').classList.remove('hidden');
+        }
+
+        function editPriority(id) {
+            const priority = masterData.priorities.find(p => p.id === id);
+
+            document.getElementById('masterDataModalTitle').textContent = 'Edit Priority';
+            document.getElementById('masterDataType').value = 'priority';
+            document.getElementById('masterDataId').value = id;
+            document.getElementById('priorityName').value = priority.name;
+            document.getElementById('priorityLevel').value = priority.level;
+
+            showMasterDataFields('priorityFields');
+            document.getElementById('masterDataModal').classList.remove('hidden');
+        }
+
+        function deletePriority(id) {
+            if (confirm('Are you sure you want to delete this priority?')) {
+                masterData.priorities = masterData.priorities.filter(p => p.id !== id);
+                saveMasterData();
+                renderMasterData();
+                populateFormOptions();
+                renderReminders();
+                showNotification('Priority deleted successfully!');
+            }
+        }
+
+        function addTag() {
+            document.getElementById('masterDataModalTitle').textContent = 'Add Tag';
+            document.getElementById('masterDataType').value = 'tag';
+            document.getElementById('masterDataId').value = '';
+            document.getElementById('tagName').value = '';
+            document.getElementById('tagColor').value = 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
+
+            showMasterDataFields('tagFields');
+            document.getElementById('masterDataModal').classList.remove('hidden');
+        }
+
+        function editTag(id) {
+            const tag = masterData.tags.find(t => t.id === id);
+
+            document.getElementById('masterDataModalTitle').textContent = 'Edit Tag';
+            document.getElementById('masterDataType').value = 'tag';
+            document.getElementById('masterDataId').value = id;
+            document.getElementById('tagName').value = tag.name;
+            document.getElementById('tagColor').value = tag.color;
+
+            showMasterDataFields('tagFields');
+            document.getElementById('masterDataModal').classList.remove('hidden');
+        }
+
+        function deleteTag(id) {
+            if (confirm('Are you sure you want to delete this tag?')) {
+                masterData.tags = masterData.tags.filter(t => t.id !== id);
+                saveMasterData();
+                renderMasterData();
+                renderReminders();
+                showNotification('Tag deleted successfully!');
+            }
+        }
+
+        function showMasterDataFields(fieldId) {
+            document.getElementById('categoryFields').classList.add('hidden');
+            document.getElementById('priorityFields').classList.add('hidden');
+            document.getElementById('tagFields').classList.add('hidden');
+
+            document.getElementById(fieldId).classList.remove('hidden');
+        }
+
+        function handleMasterDataFormSubmit(e) {
+            e.preventDefault();
+
+            const type = document.getElementById('masterDataType').value;
+            const id = document.getElementById('masterDataId').value;
+
+            if (type === 'category') {
+                const name = document.getElementById('categoryName').value;
+                const icon = document.getElementById('categoryIcon').value;
+                const color = document.getElementById('categoryColor').value;
+
+                if (id) {
+                    const category = masterData.categories.find(c => c.id === parseInt(id));
+                    category.name = name;
+                    category.icon = icon;
+                    category.color = color;
+                    showNotification('Category updated successfully!');
+                } else {
+                    const newId = Math.max(0, ...masterData.categories.map(c => c.id)) + 1;
+                    masterData.categories.push({ id: newId, name, icon, color });
+                    showNotification('Category added successfully!');
+                }
+            } else if (type === 'priority') {
+                const name = document.getElementById('priorityName').value;
+                const level = parseInt(document.getElementById('priorityLevel').value);
+
+                if (id) {
+                    const priority = masterData.priorities.find(p => p.id === parseInt(id));
+                    priority.name = name;
+                    priority.level = level;
+                    showNotification('Priority updated successfully!');
+                } else {
+                    const newId = Math.max(0, ...masterData.priorities.map(p => p.id)) + 1;
+                    masterData.priorities.push({ id: newId, name, level });
+                    showNotification('Priority added successfully!');
+                }
+            } else if (type === 'tag') {
+                const name = document.getElementById('tagName').value;
+                const color = document.getElementById('tagColor').value;
+
+                if (id) {
+                    const tag = masterData.tags.find(t => t.id === parseInt(id));
+                    tag.name = name;
+                    tag.color = color;
+                    showNotification('Tag updated successfully!');
+                } else {
+                    const newId = Math.max(0, ...masterData.tags.map(t => t.id)) + 1;
+                    masterData.tags.push({ id: newId, name, color });
+                    showNotification('Tag added successfully!');
+                }
+            }
+
+            saveMasterData();
+            renderMasterData();
+            populateFormOptions();
+            renderReminders();
+            closeMasterDataModal();
+        }
+
+        function closeMasterDataModal() {
+            document.getElementById('masterDataModal').classList.add('hidden');
+            document.getElementById('masterDataForm').reset();
+        }
+
+        function saveMasterData() {
+            localStorage.setItem('masterData', JSON.stringify(masterData));
+        }
+
+        function exportMasterData() {
+            const dataStr = JSON.stringify(masterData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+            const exportFileDefaultName = `master_data_${new Date().toISOString().split('T')[0]}.json`;
+
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+
+            showNotification('Master data exported successfully!');
+        }
+
+        function importMasterData() {
+            document.getElementById('importMasterFile').click();
+        }
+
+        document.getElementById('importMasterFile').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    try {
+                        const importedData = JSON.parse(event.target.result);
+                        if (importedData.categories && importedData.priorities && importedData.tags) {
+                            masterData = importedData;
+                            saveMasterData();
+                            renderMasterData();
+                            populateFormOptions();
+                            renderReminders();
+                            showNotification('Master data imported successfully!');
+                        } else {
+                            showNotification('Invalid file format.');
+                        }
+                    } catch (error) {
+                        showNotification('Error importing master data.');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        // Rest of the functions remain the same as in the previous code
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('darkMode', isDark);
+            updateDarkModeIcon();
+        }
+
+        function updateDarkModeIcon() {
+            const icon = document.querySelector('#darkModeToggle i');
+            icon.className = document.documentElement.classList.contains('dark')
+                ? 'fas fa-sun text-gray-600 dark:text-gray-300'
+                : 'fas fa-moon text-gray-600 dark:text-gray-300';
+        }
+
+        function toggleSearch() {
+            const searchBar = document.getElementById('searchBar');
+            searchBar.classList.toggle('hidden');
+            if (!searchBar.classList.contains('hidden')) {
+                document.getElementById('searchInput').focus();
+            }
+        }
+
+        function handleSearch(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            renderReminders(searchTerm);
+        }
+
+        function handleAdvancedSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const priorityFilter = document.getElementById('priorityFilter').value;
+            const tagFilter = document.getElementById('tagFilter').value.toLowerCase();
+
+            renderReminders(searchTerm, categoryFilter, priorityFilter, tagFilter);
+        }
+
+        function handleFilterChange(e) {
+            const filter = e.target.dataset.filter;
+            currentFilter = filter;
+
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active', 'bg-indigo-600', 'text-white');
+                tab.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+            });
+
+            e.target.classList.add('active', 'bg-indigo-600', 'text-white');
+            e.target.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+
+            renderReminders();
+        }
+
+        function handleViewChange(e) {
+            const view = e.target.dataset.view;
+            currentView = view;
+
+            // Update active tab
+            document.querySelectorAll('.view-tab').forEach(tab => {
+                tab.classList.remove('active', 'bg-indigo-600', 'text-white');
+                tab.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+            });
+
+            e.target.classList.add('active', 'bg-indigo-600', 'text-white');
+            e.target.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+
+            // Show/hide views
+            document.querySelectorAll('.view-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            document.getElementById(`${view}View`).classList.remove('hidden');
+
+            if (view === 'calendar') {
+                renderCalendar();
+            } else if (view === 'kanban') {
+                renderKanban();
+            }
+        }
+
+        function handleSortChange(e) {
+            renderReminders();
+        }
+
+        function openAddReminderModal() {
+            editingReminderId = null;
+            document.getElementById('modalTitle').textContent = 'Add New Reminder';
+            document.getElementById('reminderForm').reset();
+            document.getElementById('subtasksContainer').innerHTML = '';
+            subtaskCounter = 0;
+            document.getElementById('reminderModal').classList.remove('hidden');
+
+            // Set default datetime to now
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('reminderDateTime').value = now.toISOString().slice(0, 16);
+        }
+
+        function openEditReminderModal(id) {
+            editingReminderId = id;
+            const reminder = reminders.find(r => r.id === id);
+
+            document.getElementById('modalTitle').textContent = 'Edit Reminder';
+            document.getElementById('reminderTitle').value = reminder.title;
+            document.getElementById('reminderDescription').value = reminder.description;
+            document.getElementById('reminderCategory').value = reminder.category;
+            document.getElementById('reminderPriority').value = reminder.priority;
+            document.getElementById('reminderDateTime').value = reminder.dateTime;
+            document.getElementById('reminderRecurring').value = reminder.recurring || 'none';
+            document.getElementById('reminderTags').value = reminder.tags ? reminder.tags.join(', ') : '';
+
+            // Load subtasks
+            document.getElementById('subtasksContainer').innerHTML = '';
+            subtaskCounter = 0;
+            if (reminder.subtasks) {
+                reminder.subtasks.forEach(subtask => {
+                    addSubtask(subtask.text, subtask.completed);
+                });
+            }
+
+            document.getElementById('reminderModal').classList.remove('hidden');
+        }
+
+        function closeReminderModal() {
+            document.getElementById('reminderModal').classList.add('hidden');
+            document.getElementById('reminderForm').reset();
+            document.getElementById('subtasksContainer').innerHTML = '';
+            editingReminderId = null;
+        }
+
+        function addSubtask(text = '', completed = false) {
+            const container = document.getElementById('subtasksContainer');
+            const subtaskId = `subtask-${subtaskCounter++}`;
+
+            const subtaskHtml = `
+                <div class="flex items-center space-x-2 p-2 bg-gray-50 dark:bg-gray-700 rounded-lg subtask-item" id="${subtaskId}">
+                    <input type="checkbox" ${completed ? 'checked' : ''} class="subtask-checkbox">
+                    <input type="text" value="${text}" placeholder="Subtask description" 
+                           class="flex-1 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                    <button type="button" onclick="removeSubtask('${subtaskId}')" class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', subtaskHtml);
+        }
+
+        function removeSubtask(subtaskId) {
+            document.getElementById(subtaskId).remove();
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            // Collect subtasks
+            const subtasks = [];
+            document.querySelectorAll('#subtasksContainer > div').forEach(subtaskEl => {
+                const text = subtaskEl.querySelector('input[type="text"]').value;
+                const completed = subtaskEl.querySelector('input[type="checkbox"]').checked;
+                if (text.trim()) {
+                    subtasks.push({ text: text.trim(), completed });
+                }
+            });
+
+            // Collect tags
+            const tagsInput = document.getElementById('reminderTags').value;
+            const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+
+            const reminderData = {
+                id: editingReminderId || Date.now(),
+                title: document.getElementById('reminderTitle').value,
+                description: document.getElementById('reminderDescription').value,
+                category: document.getElementById('reminderCategory').value,
+                priority: document.getElementById('reminderPriority').value,
+                dateTime: document.getElementById('reminderDateTime').value,
+                recurring: document.getElementById('reminderRecurring').value,
+                tags: tags,
+                subtasks: subtasks,
+                completed: false,
+                createdAt: editingReminderId ? reminders.find(r => r.id === editingReminderId).createdAt : new Date().toISOString()
+            };
+
+            if (editingReminderId) {
+                const index = reminders.findIndex(r => r.id === editingReminderId);
+                reminders[index] = { ...reminders[index], ...reminderData };
+                showNotification('Reminder updated successfully!');
+            } else {
+                reminders.push(reminderData);
+                showNotification('Reminder created successfully!');
+            }
+
+            saveReminders();
+            renderReminders();
+            updateStats();
+            closeReminderModal();
+        }
+
+        function deleteReminder(id) {
+            if (confirm('Are you sure you want to delete this reminder?')) {
+                reminders = reminders.filter(r => r.id !== id);
+                saveReminders();
+                renderReminders();
+                updateStats();
+                showNotification('Reminder deleted successfully!');
+            }
+        }
+
+        function toggleReminderComplete(id) {
+            const reminder = reminders.find(r => r.id === id);
+            reminder.completed = !reminder.completed;
+
+            // Handle recurring reminders
+            if (reminder.completed && reminder.recurring !== 'none') {
+                createNextOccurrence(reminder);
+            }
+
+            saveReminders();
+            renderReminders();
+            updateStats();
+            showNotification(reminder.completed ? 'Reminder marked as completed!' : 'Reminder marked as pending!');
+        }
+
+        function createNextOccurrence(reminder) {
+            const nextDate = new Date(reminder.dateTime);
+
+            switch (reminder.recurring) {
+                case 'daily':
+                    nextDate.setDate(nextDate.getDate() + 1);
+                    break;
+                case 'weekly':
+                    nextDate.setDate(nextDate.getDate() + 7);
+                    break;
+                case 'monthly':
+                    nextDate.setMonth(nextDate.getMonth() + 1);
+                    break;
+                case 'yearly':
+                    nextDate.setFullYear(nextDate.getFullYear() + 1);
+                    break;
+            }
+
+            const newReminder = {
+                ...reminder,
+                id: Date.now(),
+                dateTime: nextDate.toISOString().slice(0, 16),
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+
+            reminders.push(newReminder);
+        }
+
+        function renderReminders(searchTerm = '', categoryFilter = '', priorityFilter = '', tagFilter = '') {
+            const container = document.getElementById('remindersContainer');
+            const emptyState = document.getElementById('emptyState');
+
+            let filteredReminders = filterReminders();
+
+            // Apply advanced filters
+            if (categoryFilter) {
+                filteredReminders = filteredReminders.filter(r => r.category === categoryFilter);
+            }
+
+            if (priorityFilter) {
+                filteredReminders = filteredReminders.filter(r => r.priority === priorityFilter);
+            }
+
+            if (tagFilter) {
+                filteredReminders = filteredReminders.filter(r =>
+                    r.tags && r.tags.some(tag => tag.toLowerCase().includes(tagFilter))
+                );
+            }
+
+            if (searchTerm) {
+                filteredReminders = filteredReminders.filter(reminder =>
+                    reminder.title.toLowerCase().includes(searchTerm) ||
+                    reminder.description.toLowerCase().includes(searchTerm) ||
+                    (reminder.tags && reminder.tags.some(tag => tag.toLowerCase().includes(searchTerm)))
+                );
+            }
+
+            // Sort reminders
+            const sortBy = document.getElementById('sortBy').value;
+            filteredReminders.sort((a, b) => {
+                switch (sortBy) {
+                    case 'priority':
+                        const priorityOrder = { high: 3, medium: 2, low: 1 };
+                        return priorityOrder[b.priority] - priorityOrder[a.priority];
+                    case 'title':
+                        return a.title.localeCompare(b.title);
+                    case 'created':
+                        return new Date(b.createdAt) - new Date(a.createdAt);
+                    default: // date
+                        return new Date(a.dateTime) - new Date(b.dateTime);
+                }
+            });
+
+            if (filteredReminders.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            container.innerHTML = filteredReminders.map(reminder => {
+                const category = masterData.categories.find(c => c.name === reminder.category);
+                const categoryIcon = category ? category.icon : 'fa-tag';
+                const categoryColor = category ? category.color : 'text-gray-500';
+
+                const reminderDate = new Date(reminder.dateTime);
+                const now = new Date();
+                const isOverdue = reminderDate < now && !reminder.completed;
+                const isToday = reminderDate.toDateString() === now.toDateString();
+
+                return `
+                    <div class="reminder-card bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 priority-${reminder.priority} fade-in ${reminder.completed ? 'opacity-75' : ''}">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas ${categoryIcon} ${categoryColor} text-xl category-icon"></i>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800 dark:text-white ${reminder.completed ? 'line-through' : ''}">${reminder.title}</h3>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400 capitalize">${reminder.category}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                ${reminder.recurring !== 'none' ? '<i class="fas fa-sync-alt text-purple-500 recurring-indicator"></i>' : ''}
+                                ${isOverdue ? '<span class="notification-badge bg-red-500 text-white text-xs px-2 py-1 rounded-full">Overdue</span>' : ''}
+                                ${isToday && !reminder.completed ? '<span class="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">Today</span>' : ''}
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 ${reminder.completed ? 'line-through' : ''}">${reminder.description || 'No description'}</p>
+                        
+                        ${reminder.tags && reminder.tags.length > 0 ? `
+                            <div class="flex flex-wrap gap-1 mb-4">
+                                ${reminder.tags.map(tag => {
+                    const tagData = masterData.tags.find(t => t.name === tag);
+                    const tagColor = tagData ? tagData.color : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
+                    return `<span class="tag ${tagColor} text-xs px-2 py-1 rounded-full">#${tag}</span>`;
+                }).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${reminder.subtasks && reminder.subtasks.length > 0 ? `
+                            <div class="mb-4">
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Subtasks (${reminder.subtasks.filter(s => s.completed).length}/${reminder.subtasks.length})</p>
+                                <div class="space-y-1">
+                                    ${reminder.subtasks.map(subtask => `
+                                        <div class="flex items-center space-x-2 text-sm">
+                                            <i class="fas ${subtask.completed ? 'fa-check-square text-green-500' : 'fa-square text-gray-400'}"></i>
+                                            <span class="${subtask.completed ? 'line-through text-gray-500' : 'text-gray-700 dark:text-gray-300'}">${subtask.text}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-clock"></i>
+                                <span>${formatDateTime(reminder.dateTime)}</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-flag"></i>
+                                <span class="capitalize">${reminder.priority}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <button onclick="toggleReminderComplete(${reminder.id})" 
+                                    class="flex items-center space-x-2 px-3 py-1 rounded-lg transition-colors ${reminder.completed ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}">
+                                <i class="fas ${reminder.completed ? 'fa-check-circle' : 'fa-circle'}"></i>
+                                <span class="text-sm">${reminder.completed ? 'Completed' : 'Mark Complete'}</span>
+                            </button>
+                            
+                            <div class="flex items-center space-x-2">
+                                <button onclick="openEditReminderModal(${reminder.id})" 
+                                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                    <i class="fas fa-edit text-gray-600 dark:text-gray-400"></i>
+                                </button>
+                                <button onclick="deleteReminder(${reminder.id})" 
+                                        class="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900 transition-colors">
+                                    <i class="fas fa-trash text-red-600 dark:text-red-400"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterReminders() {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            switch (currentFilter) {
+                case 'today':
+                    return reminders.filter(r => {
+                        const reminderDate = new Date(r.dateTime);
+                        return reminderDate >= today && reminderDate < tomorrow;
+                    });
+                case 'upcoming':
+                    return reminders.filter(r => {
+                        const reminderDate = new Date(r.dateTime);
+                        return reminderDate > now && !r.completed;
+                    });
+                case 'completed':
+                    return reminders.filter(r => r.completed);
+                case 'pending':
+                    return reminders.filter(r => !r.completed);
+                case 'recurring':
+                    return reminders.filter(r => r.recurring !== 'none');
+                default:
+                    return reminders;
+            }
+        }
+
+        function updateStats() {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            const total = reminders.length;
+            const todayCount = reminders.filter(r => {
+                const reminderDate = new Date(r.dateTime);
+                return reminderDate >= today && reminderDate < tomorrow;
+            }).length;
+            const pending = reminders.filter(r => !r.completed).length;
+            const completed = reminders.filter(r => r.completed).length;
+            const recurring = reminders.filter(r => r.recurring !== 'none').length;
+
+            document.getElementById('totalReminders').textContent = total;
+            document.getElementById('todayReminders').textContent = todayCount;
+            document.getElementById('pendingReminders').textContent = pending;
+            document.getElementById('completedReminders').textContent = completed;
+            document.getElementById('recurringReminders').textContent = recurring;
+        }
+
+        function checkReminders() {
+            const now = new Date();
+            reminders.forEach(reminder => {
+                if (!reminder.completed && !reminder.notified) {
+                    const reminderTime = new Date(reminder.dateTime);
+                    if (reminderTime <= now) {
+                        showBrowserNotification(reminder);
+                        reminder.notified = true;
+                        saveReminders();
+                    }
+                }
+            });
+        }
+
+        function showBrowserNotification(reminder) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Reminder', {
+                    body: reminder.title,
+                    icon: 'https://picsum.photos/seed/reminder/64/64.jpg'
+                });
+            } else if ('Notification' in window && Notification.permission !== 'denied') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        showBrowserNotification(reminder);
+                    }
+                });
+            }
+        }
+
+        function showNotification(message) {
+            const toast = document.getElementById('notificationToast');
+            document.getElementById('notificationMessage').textContent = message;
+
+            toast.classList.remove('translate-y-full');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-full');
+            }, 3000);
+        }
+
+        function formatDateTime(dateTimeString) {
+            const date = new Date(dateTimeString);
+            const options = {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function saveReminders() {
+            localStorage.setItem('reminders', JSON.stringify(reminders));
+        }
+
+        // Calendar functionality
+        function initializeCalendar() {
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const year = currentMonth.getFullYear();
+            const month = currentMonth.getMonth();
+
+            document.getElementById('currentMonth').textContent = new Date(year, month).toLocaleDateString('en-US', { month: 'long' });
+            document.getElementById('currentYear').textContent = year;
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+
+            const calendarGrid = document.getElementById('calendarGrid');
+            calendarGrid.innerHTML = '';
+
+            // Empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                calendarGrid.innerHTML += '<div></div>';
+            }
+
+            // Days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const isToday = date.toDateString() === today.toDateString();
+                const dayReminders = reminders.filter(r => {
+                    const reminderDate = new Date(r.dateTime);
+                    return reminderDate.toDateString() === date.toDateString();
+                });
+
+                const dayHtml = `
+                    <div class="calendar-day p-2 min-h-[80px] border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer ${isToday ? 'bg-indigo-100 dark:bg-indigo-900' : ''}" onclick="showDayReminders('${date.toISOString()}')">
+                        <div class="font-semibold text-sm ${isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-300'}">${day}</div>
+                        ${dayReminders.length > 0 ? `
+                            <div class="mt-1 space-y-1">
+                                ${dayReminders.slice(0, 3).map(r => {
+                    const category = masterData.categories.find(c => c.name === r.category);
+                    const categoryColor = category ? category.color.replace('text-', 'bg-').replace('500', '100') : 'bg-gray-100';
+                    return `<div class="text-xs p-1 rounded ${r.completed ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' : categoryColor + ' text-gray-700 dark:text-gray-300'} truncate">
+                                        ${r.title}
+                                    </div>`;
+                }).join('')}
+                                ${dayReminders.length > 3 ? `<div class="text-xs text-gray-500">+${dayReminders.length - 3} more</div>` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+
+                calendarGrid.innerHTML += dayHtml;
+            }
+        }
+
+        function changeMonth(direction) {
+            currentMonth.setMonth(currentMonth.getMonth() + direction);
+            renderCalendar();
+        }
+
+        function goToToday() {
+            currentMonth = new Date();
+            renderCalendar();
+        }
+
+        function showDayReminders(dateString) {
+            const date = new Date(dateString);
+            const dayReminders = reminders.filter(r => {
+                const reminderDate = new Date(r.dateTime);
+                return reminderDate.toDateString() === date.toDateString();
+            });
+
+            if (dayReminders.length > 0) {
+                alert(`Reminders for ${date.toLocaleDateString()}:\n\n${dayReminders.map(r => `- ${r.title}`).join('\n')}`);
+            } else {
+                alert(`No reminders for ${date.toLocaleDateString()}`);
+            }
+        }
+
+        // Kanban functionality
+        function renderKanban() {
+            const todoColumn = document.getElementById('todoColumn');
+            const inProgressColumn = document.getElementById('inProgressColumn');
+            const completedColumn = document.getElementById('completedColumn');
+
+            todoColumn.innerHTML = '';
+            inProgressColumn.innerHTML = '';
+            completedColumn.innerHTML = '';
+
+            reminders.forEach(reminder => {
+                const kanbanCard = createKanbanCard(reminder);
+
+                if (reminder.completed) {
+                    completedColumn.appendChild(kanbanCard);
+                } else {
+                    const reminderDate = new Date(reminder.dateTime);
+                    const now = new Date();
+                    const isOverdue = reminderDate < now;
+
+                    if (isOverdue) {
+                        inProgressColumn.appendChild(kanbanCard);
+                    } else {
+                        todoColumn.appendChild(kanbanCard);
+                    }
+                }
+            });
+        }
+
+        function createKanbanCard(reminder) {
+            const card = document.createElement('div');
+            card.className = `bg-white dark:bg-gray-700 rounded-lg shadow p-4 cursor-move reminder-card priority-${reminder.priority}`;
+            card.draggable = true;
+            card.dataset.reminderId = reminder.id;
+
+            const category = masterData.categories.find(c => c.name === reminder.category);
+            const categoryIcon = category ? category.icon : 'fa-tag';
+            const categoryColor = category ? category.color : 'text-gray-500';
+
+            const reminderDate = new Date(reminder.dateTime);
+            const isOverdue = reminderDate < new Date() && !reminder.completed;
+
+            card.innerHTML = `
+                <div class="flex items-start justify-between mb-2">
+                    <h4 class="font-semibold text-gray-800 dark:text-white text-sm ${reminder.completed ? 'line-through' : ''}">${reminder.title}</h4>
+                    <div class="flex items-center space-x-1">
+                        ${reminder.recurring !== 'none' ? '<i class="fas fa-sync-alt text-purple-500 text-xs"></i>' : ''}
+                        ${isOverdue ? '<span class="bg-red-500 text-white text-xs px-1 rounded">!</span>' : ''}
+                    </div>
+                </div>
+                <p class="text-xs text-gray-600 dark:text-gray-300 mb-2">${reminder.description || ''}</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-500">${formatDateTime(reminder.dateTime)}</span>
+                    <div class="flex items-center space-x-1">
+                        <i class="fas ${categoryIcon} ${categoryColor} text-xs"></i>
+                        <span class="text-xs text-gray-500 capitalize">${reminder.priority}</span>
+                    </div>
+                </div>
+            `;
+
+            // Add drag and drop functionality
+            card.addEventListener('dragstart', handleDragStart);
+            card.addEventListener('dragend', handleDragEnd);
+
+            return card;
+        }
+
+        let draggedElement = null;
+
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            e.target.style.opacity = '0.5';
+        }
+
+        function handleDragEnd(e) {
+            e.target.style.opacity = '';
+        }
+
+        // Voice recognition functionality
+        function initializeVoiceRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onresult = function (event) {
+                    const transcript = event.results[0][0].transcript;
+                    processVoiceInput(transcript);
+                };
+
+                recognition.onerror = function (event) {
+                    console.error('Speech recognition error:', event.error);
+                    stopVoiceInput();
+                    showNotification('Voice recognition error. Please try again.');
+                };
+            }
+        }
+
+        function startVoiceInput() {
+            if (recognition) {
+                document.getElementById('voiceModal').classList.remove('hidden');
+                document.getElementById('voiceIndicator').classList.remove('hidden');
+                recognition.start();
+            } else {
+                showNotification('Voice recognition not supported in this browser.');
+            }
+        }
+
+        function stopVoiceInput() {
+            if (recognition) {
+                recognition.stop();
+            }
+            document.getElementById('voiceModal').classList.add('hidden');
+            document.getElementById('voiceIndicator').classList.add('hidden');
+        }
+
+        function processVoiceInput(transcript) {
+            stopVoiceInput();
+
+            // Simple parsing for demo purposes
+            const reminder = {
+                id: Date.now(),
+                title: transcript,
+                description: 'Created by voice input',
+                category: 'Personal',
+                priority: 'Medium',
+                dateTime: new Date(Date.now() + 3600000).toISOString().slice(0, 16), // 1 hour from now
+                recurring: 'none',
+                tags: ['voice'],
+                subtasks: [],
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+
+            reminders.push(reminder);
+            saveReminders();
+            renderReminders();
+            updateStats();
+            showNotification('Reminder created from voice input!');
+        }
+
+        // Export/Import functionality
+        function exportReminders() {
+            const dataStr = JSON.stringify(reminders, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+            const exportFileDefaultName = `reminders_${new Date().toISOString().split('T')[0]}.json`;
+
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+
+            showNotification('Reminders exported successfully!');
+        }
+
+        function importReminders(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    try {
+                        const importedReminders = JSON.parse(event.target.result);
+                        if (Array.isArray(importedReminders)) {
+                            reminders = [...reminders, ...importedReminders];
+                            saveReminders();
+                            renderReminders();
+                            updateStats();
+                            showNotification('Reminders imported successfully!');
+                        } else {
+                            showNotification('Invalid file format.');
+                        }
+                    } catch (error) {
+                        showNotification('Error importing reminders.');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        // Request notification permission on load
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+    </script>
+</body>
+
+</html>

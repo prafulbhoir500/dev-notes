@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RemindMe - Modern Reminder App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #f59e0b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            
+            --bg-primary: #ffffff;
+            --bg-secondary: #f3f4f6;
+            --bg-tertiary: #e5e7eb;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+            --bg-tertiary: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-tertiary: #9ca3af;
+            --border-color: #374151;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--bg-primary);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            background-color: transparent;
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+        }
+
+        .btn-icon:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-icon.total {
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+        }
+
+        .stat-icon.pending {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .stat-icon.completed {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .stat-icon.overdue {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Controls */
+        .controls {
+            background-color: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+        }
+
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* Reminders Grid */
+        .reminders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .reminder-card {
+            background-color: var(--bg-primary);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reminder-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .reminder-card.completed {
+            opacity: 0.7;
+        }
+
+        .reminder-card.completed .reminder-title {
+            text-decoration: line-through;
+        }
+
+        .reminder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .reminder-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .reminder-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-work {
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+        }
+
+        .category-personal {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .category-health {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        .category-other {
+            background-color: rgba(107, 114, 128, 0.1);
+            color: var(--text-secondary);
+        }
+
+        .reminder-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .reminder-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-item i {
+            width: 16px;
+            color: var(--text-tertiary);
+        }
+
+        .priority-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .priority-high {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        .priority-medium {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .priority-low {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .reminder-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-ghost {
+            background-color: transparent;
+            color: var(--text-secondary);
+        }
+
+        .btn-ghost:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--bg-primary);
+            border-radius: 1rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .reminder-card {
+            animation: slideIn 0.3s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .reminders-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+        }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--bg-primary);
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            font-size: 1.5rem;
+        }
+
+        .toast.success .toast-icon {
+            color: var(--success-color);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--danger-color);
+        }
+
+        .toast.warning .toast-icon {
+            color: var(--warning-color);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-message {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-bell"></i>
+                    <span>RemindMe</span>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-icon" id="themeToggle" title="Toggle theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="btn btn-primary" id="addReminderBtn">
+                        <i class="fas fa-plus"></i>
+                        Add Reminder
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <div class="stat-value" id="totalReminders">0</div>
+                    <div class="stat-label">Total Reminders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon pending">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-value" id="pendingReminders">0</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon completed">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-value" id="completedReminders">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon overdue">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-value" id="overdueReminders">0</div>
+                    <div class="stat-label">Overdue</div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <div class="controls-grid">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search reminders...">
+                    </div>
+                    <select class="filter-select" id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="work">Work</option>
+                        <option value="personal">Personal</option>
+                        <option value="health">Health</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="overdue">Overdue</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Reminders Grid -->
+            <div class="reminders-grid" id="remindersGrid">
+                <!-- Reminders will be dynamically added here -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="fas fa-bell-slash"></i>
+                <h3>No reminders yet</h3>
+                <p>Create your first reminder to get started!</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal" id="reminderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Add New Reminder</h2>
+                <button class="btn-icon" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="reminderForm">
+                <div class="form-group">
+                    <label class="form-label" for="title">Title</label>
+                    <input type="text" class="form-input" id="title" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="description">Description</label>
+                    <textarea class="form-textarea" id="description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="category">Category</label>
+                    <select class="form-select" id="category" required>
+                        <option value="">Select category</option>
+                        <option value="work">Work</option>
+                        <option value="personal">Personal</option>
+                        <option value="health">Health</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="priority">Priority</label>
+                    <select class="form-select" id="priority" required>
+                        <option value="">Select priority</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="date">Date</label>
+                    <input type="date" class="form-input" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="time">Time</label>
+                    <input type="time" class="form-input" id="time" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Save Reminder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle toast-icon"></i>
+        <div class="toast-content">
+            <div class="toast-title">Success</div>
+            <div class="toast-message">Reminder saved successfully!</div>
+        </div>
+    </div>
+
+    <script>
+        // App State
+        let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+        let editingId = null;
+        let notificationInterval = null;
+
+        // DOM Elements
+        const modal = document.getElementById('reminderModal');
+        const form = document.getElementById('reminderForm');
+        const remindersGrid = document.getElementById('remindersGrid');
+        const emptyState = document.getElementById('emptyState');
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        const themeToggle = document.getElementById('themeToggle');
+        const toast = document.getElementById('toast');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            renderReminders();
+            updateStats();
+            startNotificationCheck();
+            
+            // Set minimum date to today
+            document.getElementById('date').min = new Date().toISOString().split('T')[0];
+        });
+
+        // Theme Management
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = themeToggle.querySelector('i');
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Modal Management
+        document.getElementById('addReminderBtn').addEventListener('click', () => {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'Add New Reminder';
+            form.reset();
+            modal.classList.add('active');
+        });
+
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+        document.getElementById('cancelBtn').addEventListener('click', closeModal);
+
+        function closeModal() {
+            modal.classList.remove('active');
+            form.reset();
+            editingId = null;
+        }
+
+        // Form Submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                category: document.getElementById('category').value,
+                priority: document.getElementById('priority').value,
+                date: document.getElementById('date').value,
+                time: document.getElementById('time').value,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+
+            if (editingId) {
+                updateReminder(editingId, formData);
+            } else {
+                addReminder(formData);
+            }
+        });
+
+        // CRUD Operations
+        function addReminder(data) {
+            const reminder = {
+                id: Date.now().toString(),
+                ...data
+            };
+            
+            reminders.push(reminder);
+            saveReminders();
+            renderReminders();
+            updateStats();
+            closeModal();
+            showToast('Success', 'Reminder added successfully!', 'success');
+        }
+
+        function updateReminder(id, data) {
+            const index = reminders.findIndex(r => r.id === id);
+            if (index !== -1) {
+                reminders[index] = { ...reminders[index], ...data };
+                saveReminders();
+                renderReminders();
+                updateStats();
+                closeModal();
+                showToast('Success', 'Reminder updated successfully!', 'success');
+            }
+        }
+
+        function deleteReminder(id) {
+            if (confirm('Are you sure you want to delete this reminder?')) {
+                reminders = reminders.filter(r => r.id !== id);
+                saveReminders();
+                renderReminders();
+                updateStats();
+                showToast('Success', 'Reminder deleted successfully!', 'success');
+            }
+        }
+
+        function toggleComplete(id) {
+            const reminder = reminders.find(r => r.id === id);
+            if (reminder) {
+                reminder.completed = !reminder.completed;
+                saveReminders();
+                renderReminders();
+                updateStats();
+                showToast(
+                    reminder.completed ? 'Completed' : 'Reopened',
+                    reminder.completed ? 'Reminder marked as completed!' : 'Reminder reopened!',
+                    'success'
+                );
+            }
+        }
+
+        function editReminder(id) {
+            const reminder = reminders.find(r => r.id === id);
+            if (reminder) {
+                editingId = id;
+                document.getElementById('modalTitle').textContent = 'Edit Reminder';
+                
+                document.getElementById('title').value = reminder.title;
+                document.getElementById('description').value = reminder.description;
+                document.getElementById('category').value = reminder.category;
+                document.getElementById('priority').value = reminder.priority;
+                document.getElementById('date').value = reminder.date;
+                document.getElementById('time').value = reminder.time;
+                
+                modal.classList.add('active');
+            }
+        }
+
+        // Storage
+        function saveReminders() {
+            localStorage.setItem('reminders', JSON.stringify(reminders));
+        }
+
+        // Rendering
+        function renderReminders() {
+            const filteredReminders = getFilteredReminders();
+            
+            if (filteredReminders.length === 0) {
+                remindersGrid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            remindersGrid.style.display = 'grid';
+            emptyState.style.display = 'none';
+            
+            remindersGrid.innerHTML = filteredReminders.map(reminder => `
+                <div class="reminder-card ${reminder.completed ? 'completed' : ''}" data-id="${reminder.id}">
+                    <div class="reminder-header">
+                        <div>
+                            <h3 class="reminder-title">${escapeHtml(reminder.title)}</h3>
+                            <span class="reminder-category category-${reminder.category}">${reminder.category}</span>
+                        </div>
+                        <span class="priority-badge priority-${reminder.priority}">
+                            <i class="fas fa-flag"></i>
+                            ${reminder.priority}
+                        </span>
+                    </div>
+                    ${reminder.description ? `<p class="reminder-description">${escapeHtml(reminder.description)}</p>` : ''}
+                    <div class="reminder-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>${formatDate(reminder.date)}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>${reminder.time}</span>
+                        </div>
+                        ${isOverdue(reminder) && !reminder.completed ? `
+                            <div class="meta-item" style="color: var(--danger-color);">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Overdue</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="reminder-actions">
+                        <button class="btn btn-sm btn-ghost" onclick="toggleComplete('${reminder.id}')">
+                            <i class="fas fa-${reminder.completed ? 'undo' : 'check'}"></i>
+                        </button>
+                        <button class="btn btn-sm btn-ghost" onclick="editReminder('${reminder.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-ghost" onclick="deleteReminder('${reminder.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filtering
+        function getFilteredReminders() {
+            let filtered = [...reminders];
+            
+            // Search filter
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(r => 
+                    r.title.toLowerCase().includes(searchTerm) ||
+                    r.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Category filter
+            const category = categoryFilter.value;
+            if (category) {
+                filtered = filtered.filter(r => r.category === category);
+            }
+            
+            // Status filter
+            const status = statusFilter.value;
+            if (status) {
+                filtered = filtered.filter(r => {
+                    if (status === 'completed') return r.completed;
+                    if (status === 'pending') return !r.completed && !isOverdue(r);
+                    if (status === 'overdue') return !r.completed && isOverdue(r);
+                    return true;
+                });
+            }
+            
+            // Sort by date and time
+            filtered.sort((a, b) => {
+                const dateA = new Date(`${a.date} ${a.time}`);
+                const dateB = new Date(`${b.date} ${b.time}`);
+                return dateA - dateB;
+            });
+            
+            return filtered;
+        }
+
+        // Event Listeners for Filters
+        searchInput.addEventListener('input', renderReminders);
+        categoryFilter.addEventListener('change', renderReminders);
+        statusFilter.addEventListener('change', renderReminders);
+
+        // Stats
+        function updateStats() {
+            const total = reminders.length;
+            const completed = reminders.filter(r => r.completed).length;
+            const pending = reminders.filter(r => !r.completed && !isOverdue(r)).length;
+            const overdue = reminders.filter(r => !r.completed && isOverdue(r)).length;
+            
+            document.getElementById('totalReminders').textContent = total;
+            document.getElementById('completedReminders').textContent = completed;
+            document.getElementById('pendingReminders').textContent = pending;
+            document.getElementById('overdueReminders').textContent = overdue;
+        }
+
+        // Notifications
+        function startNotificationCheck() {
+            // Check every minute
+            notificationInterval = setInterval(checkNotifications, 60000);
+            
+            // Request notification permission
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        function checkNotifications() {
+            const now = new Date();
+            const upcomingReminders = reminders.filter(r => {
+                if (r.completed) return false;
+                const reminderDate = new Date(`${r.date} ${r.time}`);
+                const timeDiff = reminderDate - now;
+                return timeDiff > 0 && timeDiff <= 5 * 60 * 1000; // 5 minutes before
+            });
+            
+            upcomingReminders.forEach(reminder => {
+                showNotification(reminder);
+            });
+        }
+
+        function showNotification(reminder) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Reminder: ' + reminder.title, {
+                    body: reminder.description || 'Time for your reminder!',
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%236366f1"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>'
+                });
+            }
+        }
+
+        // Toast Notifications
+        function showToast(title, message, type = 'success') {
+            const toastEl = document.getElementById('toast');
+            const icon = toastEl.querySelector('.toast-icon');
+            const titleEl = toastEl.querySelector('.toast-title');
+            const messageEl = toastEl.querySelector('.toast-message');
+            
+            // Update content
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            // Update icon and class
+            toastEl.className = `toast ${type} show`;
+            if (type === 'success') {
+                icon.className = 'fas fa-check-circle toast-icon';
+            } else if (type === 'error') {
+                icon.className = 'fas fa-exclamation-circle toast-icon';
+            } else if (type === 'warning') {
+                icon.className = 'fas fa-exclamation-triangle toast-icon';
+            }
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toastEl.classList.remove('show');
+            }, 3000);
+        }
+
+        // Utility Functions
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function isOverdue(reminder) {
+            const now = new Date();
+            const reminderDate = new Date(`${reminder.date} ${reminder.time}`);
+            return reminderDate < now;
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (notificationInterval) {
+                clearInterval(notificationInterval);
+            }
+        });
+    </script>
+</body>
+</html>
